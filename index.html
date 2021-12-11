@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="user-scalable=0, initial-scale=1,minimum-scale=1, maximum-scale=1, width=device-width, minimal-ui=1">
+    <title>backgammon</title>
+
+    <link rel="stylesheet" href="style/style.css">
+    <script src="js/app.js"></script>
+    <style>
+
+        @font-face {
+            font-family: lalezar;
+            src: url(fonts/lalezar.ttf);
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: 0;
+            padding: 0;
+            background: #090021;
+            font-family: 'lalezar';
+        }
+
+        #phaser-game {
+            width: 100%;
+            height: 100%;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        #game {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .dot {
+            height: var(--dot-width);
+            width: var(--dot-height);
+            background-color: #453C6B;
+            border-radius: 50%;
+        }
+
+        .box {
+            height: var(--box-height);
+            width: var(--box-width);
+        }
+
+        .horizContainer {
+            height: var(--dot-height);
+            width: var(--box-width);
+            border: 2px;
+        }
+
+        .vertContainer {
+            height: var(--box-height);
+            width: var(--dot-width);
+            border: 2px;
+        }
+
+        #board {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 50px;
+            margin: 10px
+        }
+
+        #header {
+            padding:10px 50px;
+            margin:10px
+        }
+
+    </style>
+
+</head>
+<body>
+    <div id='phaser-game'></div>
+</body>
+<!-- frameworks -->
+<script src="js/phaser.min.js"></script>
+<script src="js/socket.io.js"></script>
+<script src="js/nineslice.js"></script>
+<!-- scenes -->
+<script src="js/scenes/sceneWaiting.js"></script>
+<script src="js/scenes/sceneLoad.js"></script>
+<script src="js/scenes/sceneMain.js"></script>
+<!-- mc -->
+<script src="js/constants.js"></script>
+<script src="js/classes/mc/model.js"></script>
+<script src="js/classes/mc/controller.js"></script>
+<!-- components -->
+<script src="js/classes/comps/UserBox.js"></script>
+<script src="js/classes/comps/ProgressBox.js"></script>
+<script src="js/classes/comps/ScoreBox.js"></script>
+<script src="js/classes/comps/TurnBox.js"></script>
+<!-- utils -->
+<script src="js/classes/util/align.js"></script>
+<script src="js/classes/util/alignGrid.js"></script>
+<script src="js/classes/util/Base64Utils.js"></script>
+<script src="js/classes/util/PersianNumUtil.js"></script>
+
+<script>
+  var game;
+  var model;
+  var emitter;
+  var G;
+  var controller;
+  var battle = {
+    _id: '6162c4919a96054390ae3bd0'
+  };
+  var client = {
+    id: 6992
+  }
+  var opponent = {
+    id: 462472
+  }
+  var has_submitted_ready = false;
+
+  const my_avatar_url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhVzfQ0dNV81i_D80HcVsJg-QUF4YGb0oqig&usqp=CAU"
+  const opponent_avatar_url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhVzfQ0dNV81i_D80HcVsJg-QUF4YGb0oqig&usqp=CAU"
+
+  const my_name = "{{my_name}}"
+  const opponent_name = "{{opponent_name}}"
+
+  const opponent_hero_url = "{{opponent_hero_url}}"
+  // http://localhost:4853/
+  // http://localhost:4855/
+  // http://s.winnerapp.ir
+  const socket = io('http://localhost:4855/', {
+    timeout: 60 * 1000,
+    reconnection: true,
+    forceNew: true,
+    query: {
+      authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZTRjMTAyNzUxMTI5M2ViNDFlMTYxNTc3Zjk3ZDQ1YTBiZDc2ZDI3MmY4NGUzODUwNmY3NmU2OGQ2YzlkYjc1ZDJhYmI0MzI3ZTQyYjNjNWUiLCJpYXQiOjE2MzM1MjU4MDIsIm5iZiI6MTYzMzUyNTgwMiwiZXhwIjoxNjY1MDYxODAyLCJzdWIiOiI2OTkyIiwic2NvcGVzIjpbXX0.cN8wmgp3PutXvHpBjYYg8aGBlqS_yKWJ9E1rIo83hTgynni-DxOfoHo9YLVDLtuUnBVsNTYNS72VcGfg2sosKsJ4FBaaHmejHBosEOsaUvUQQQLG979lPn3X3hGf796zmilUat6GikuLV55z_aZoyy4C4Mf5fpPp0NEDvKYmo03Ld2hjjZMIOPFd0bu_8oiFj6LkpZOxxQgE5nqyFVjSv3QC48vgmSay7tjlu-sdGiCVifq09lzurCONa-hkK9K3NiKpAEGZt20-aAF8mFvw4D4fwxiLjXU9Tt1joW_Ea_31wdO5bPExPi74h9oN2zCptFtUYglZZerWGSH_zicsOgVvQqzVjRrebEzZj3Tt1UJoTzn0ztv1k2iitVAtBeYkCO0QvTgqZFomaboOmlFj4QNCb8DZ0JbybJtYRVjp2Z1qStuqEG4i2H5aVZPMjbyWpBJ591tdeqMthhN4-gdvs6O1SUJDSvdtF4EyCZmm9OFTp0hkDro14K6oHtCWfziyqAzTiv5owGKuo4piu91KccfH4YiJQMZRn9nqNkoK1-3JV20rzVi-fbIuck-9tjUzuUiFHh0AQaRmEJHE79rles9YRe8HrBwrNKzn6C4z7nk7Ailf8v45carP0d4XGivJKll1ALbO2zxowWSZQQQ_VAFcteEAhpXCNBRyg-WQw5U"
+    }
+  });
+  socket.connect();
+  socket.on("battle_created_successfully", (json) => {
+    let items = JSON.parse(json)
+    battle._id = items._id
+  })
+
+  window.onload = function () {
+    let body = document.getElementsByTagName('body')[0]
+    // body.clientHeight body.clientWidth
+    const HEIGHT = body.clientHeight // pixels
+    // console.log(body.clientWidth)
+    // derived dimensions
+    // const WIDTH = HEIGHT * 0.9;
+    const WIDTH = body.clientWidth;
+
+    // window.innerWidth && window.innerHeight
+    let config = {
+      type: Phaser.CANVAS,
+      width: 1080,
+      height: 1920,
+      parent: 'phaser-game',
+      antialias: true,
+      // renderTexture: "2d",
+      transparent: true,
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+      },
+      physics: {
+        default: 'arcade',
+        arcade: {
+          debug: false
+        }
+      },
+      plugins: {
+        global: [NineSlice.Plugin.DefaultCfg],
+      },
+      scene: [
+        SceneWaiting,
+        SceneMain
+      ]
+    };
+
+    emitter = new Phaser.Events.EventEmitter();
+    G = new Constants();
+    model = new Model();
+    game = new Phaser.Game(config);
+
+  }
+</script>
+</html>
