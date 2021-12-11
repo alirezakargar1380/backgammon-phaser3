@@ -31,12 +31,12 @@ class Backgammon extends Phaser.GameObjects.Container {
     // ================================================= left down
     this.stroke = 3
     this.bead_size = 60
-    // 1
+
     this.bead = this.scene.add.image(
         (94+(60*2)+(3*2)),
         (1100+(this.bead_size/2) + (this.stroke) - ((this.bead_size)*0) ), "black_bead")
 
-    // 2
+
     this.bead = this.scene.add.image(
         (94+(60*2)+(3*2)),
         (1100+(this.bead_size/2) + (this.stroke) - ((this.bead_size)*1) ), "black_bead")
@@ -48,5 +48,10 @@ class Backgammon extends Phaser.GameObjects.Container {
     this.bead = this.scene.add.image(
         game.config.width-(94+(60*1)+(5*1)),
         (500+(60*0)), "black_bead")
+
+    // ================================================= right down
+    this.bead = this.scene.add.image(
+        game.config.width-(94+(60*1)+(4*1)),
+        (1100+((this.bead_size/2)) + (this.stroke) - ((this.bead_size)*0) ), "black_bead")
   }
 }
