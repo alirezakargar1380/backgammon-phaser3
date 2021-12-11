@@ -108,6 +108,7 @@
 <script src="js/classes/comps/ProgressBox.js"></script>
 <script src="js/classes/comps/ScoreBox.js"></script>
 <script src="js/classes/comps/TurnBox.js"></script>
+<script src="js/classes/comps/Backgammon.js"></script>
 <!-- utils -->
 <script src="js/classes/util/align.js"></script>
 <script src="js/classes/util/alignGrid.js"></script>
@@ -141,19 +142,16 @@
   // http://localhost:4853/
   // http://localhost:4855/
   // http://s.winnerapp.ir
-  const socket = io('http://localhost:4855/', {
-    timeout: 60 * 1000,
-    reconnection: true,
-    forceNew: true,
-    query: {
-      authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZTRjMTAyNzUxMTI5M2ViNDFlMTYxNTc3Zjk3ZDQ1YTBiZDc2ZDI3MmY4NGUzODUwNmY3NmU2OGQ2YzlkYjc1ZDJhYmI0MzI3ZTQyYjNjNWUiLCJpYXQiOjE2MzM1MjU4MDIsIm5iZiI6MTYzMzUyNTgwMiwiZXhwIjoxNjY1MDYxODAyLCJzdWIiOiI2OTkyIiwic2NvcGVzIjpbXX0.cN8wmgp3PutXvHpBjYYg8aGBlqS_yKWJ9E1rIo83hTgynni-DxOfoHo9YLVDLtuUnBVsNTYNS72VcGfg2sosKsJ4FBaaHmejHBosEOsaUvUQQQLG979lPn3X3hGf796zmilUat6GikuLV55z_aZoyy4C4Mf5fpPp0NEDvKYmo03Ld2hjjZMIOPFd0bu_8oiFj6LkpZOxxQgE5nqyFVjSv3QC48vgmSay7tjlu-sdGiCVifq09lzurCONa-hkK9K3NiKpAEGZt20-aAF8mFvw4D4fwxiLjXU9Tt1joW_Ea_31wdO5bPExPi74h9oN2zCptFtUYglZZerWGSH_zicsOgVvQqzVjRrebEzZj3Tt1UJoTzn0ztv1k2iitVAtBeYkCO0QvTgqZFomaboOmlFj4QNCb8DZ0JbybJtYRVjp2Z1qStuqEG4i2H5aVZPMjbyWpBJ591tdeqMthhN4-gdvs6O1SUJDSvdtF4EyCZmm9OFTp0hkDro14K6oHtCWfziyqAzTiv5owGKuo4piu91KccfH4YiJQMZRn9nqNkoK1-3JV20rzVi-fbIuck-9tjUzuUiFHh0AQaRmEJHE79rles9YRe8HrBwrNKzn6C4z7nk7Ailf8v45carP0d4XGivJKll1ALbO2zxowWSZQQQ_VAFcteEAhpXCNBRyg-WQw5U"
-    }
-  });
-  socket.connect();
-  socket.on("battle_created_successfully", (json) => {
-    let items = JSON.parse(json)
-    battle._id = items._id
-  })
+  // const socket = io('http://localhost:4855/', {
+  //   timeout: 60 * 1000,
+  //   reconnection: true,
+  //   forceNew: true,
+  //   query: {
+  //     authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZTRjMTAyNzUxMTI5M2ViNDFlMTYxNTc3Zjk3ZDQ1YTBiZDc2ZDI3MmY4NGUzODUwNmY3NmU2OGQ2YzlkYjc1ZDJhYmI0MzI3ZTQyYjNjNWUiLCJpYXQiOjE2MzM1MjU4MDIsIm5iZiI6MTYzMzUyNTgwMiwiZXhwIjoxNjY1MDYxODAyLCJzdWIiOiI2OTkyIiwic2NvcGVzIjpbXX0.cN8wmgp3PutXvHpBjYYg8aGBlqS_yKWJ9E1rIo83hTgynni-DxOfoHo9YLVDLtuUnBVsNTYNS72VcGfg2sosKsJ4FBaaHmejHBosEOsaUvUQQQLG979lPn3X3hGf796zmilUat6GikuLV55z_aZoyy4C4Mf5fpPp0NEDvKYmo03Ld2hjjZMIOPFd0bu_8oiFj6LkpZOxxQgE5nqyFVjSv3QC48vgmSay7tjlu-sdGiCVifq09lzurCONa-hkK9K3NiKpAEGZt20-aAF8mFvw4D4fwxiLjXU9Tt1joW_Ea_31wdO5bPExPi74h9oN2zCptFtUYglZZerWGSH_zicsOgVvQqzVjRrebEzZj3Tt1UJoTzn0ztv1k2iitVAtBeYkCO0QvTgqZFomaboOmlFj4QNCb8DZ0JbybJtYRVjp2Z1qStuqEG4i2H5aVZPMjbyWpBJ591tdeqMthhN4-gdvs6O1SUJDSvdtF4EyCZmm9OFTp0hkDro14K6oHtCWfziyqAzTiv5owGKuo4piu91KccfH4YiJQMZRn9nqNkoK1-3JV20rzVi-fbIuck-9tjUzuUiFHh0AQaRmEJHE79rles9YRe8HrBwrNKzn6C4z7nk7Ailf8v45carP0d4XGivJKll1ALbO2zxowWSZQQQ_VAFcteEAhpXCNBRyg-WQw5U"
+  //   }
+  // });
+  // socket.connect();
+
 
   window.onload = function () {
     let body = document.getElementsByTagName('body')[0]
@@ -187,6 +185,7 @@
         global: [NineSlice.Plugin.DefaultCfg],
       },
       scene: [
+        SceneLoad,
         SceneWaiting,
         SceneMain
       ]

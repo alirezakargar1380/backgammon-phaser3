@@ -13,10 +13,13 @@ class SceneLoad extends Phaser.Scene {
         this.load.image("my_avatar", my_avatar_url);
         this.load.image("opponent_avatar", opponent_avatar_url);
         // GAME
+        this.load.image("backgammon", "images/backgammon.png");
+
     }
 
     create() {
-        this.scene.start("SceneWaiting");
+        // this.scene.start("SceneWaiting");
+        this.scene.start("SceneMain");
     }
 
 }

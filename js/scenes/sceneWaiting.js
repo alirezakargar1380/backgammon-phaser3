@@ -7,6 +7,8 @@ class SceneWaiting extends Phaser.Scene {
 
     create() {
 
+      this.scene.start("SceneMain");
+
       this.aGrid = new AlignGrid({
         scene: this,
         rows: 5,
