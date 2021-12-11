@@ -18,6 +18,8 @@ class SceneMain extends Phaser.Scene {
       scene: this
     })
     this.aGrid.placeAtIndex(93, this.Backgammon)
+
+
   }
 
   update() {}
